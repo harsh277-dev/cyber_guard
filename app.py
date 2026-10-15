@@ -338,6 +338,8 @@ elif page == "File Encryption":
                     )
 
     # -------- DECRYPTION --------
+
+    # -------- DECRYPTION --------
     with decrypt_tab:
         st.subheader("Decrypt your file")
 
@@ -350,12 +352,6 @@ elif page == "File Encryption":
             "Enter your encryption key",
             type="password",
             key="decryption_key"
-        )
-
-        output_filename = st.text_input(
-            "Name for the restored file",
-            value="restored_file.txt",
-            key="restored_filename"
         )
 
         if st.button(
@@ -379,15 +375,22 @@ elif page == "File Encryption":
                         encrypted_file.getvalue()
                     )
 
+                    # Restore the original file extension
+                    encrypted_name = encrypted_file.name
+
+                    if encrypted_name.lower().endswith(".encrypted"):
+                        original_filename = encrypted_name[:-len(".encrypted")]
+                    else:
+                        original_filename = encrypted_name
+
+                    restored_filename = "restored_" + original_filename
+
                     st.success("File decrypted successfully!")
 
                     st.download_button(
                         "⬇️ Download restored file",
                         data=original_data,
-                        file_name=(
-                            output_filename.strip()
-                            or "restored_file.txt"
-                        ),
+                        file_name=restored_filename,
                         mime="application/octet-stream",
                         key="download_restored"
                     )
@@ -399,9 +402,8 @@ elif page == "File Encryption":
                     )
 
                 except Exception as error:
-                    st.error(
-                        f"Decryption failed: {error}"
-                    )
+                    st.error(f"Decryption failed: {error}")
+
 # ---------- Phishing analysis ----------
 elif page == "Phishing Analysis":
     st.title("✉️ Phishing Email Analysis")
